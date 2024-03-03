@@ -11,11 +11,18 @@ let package = Package(
             name: "TaskManagmentSDK",
             targets: ["TaskManagmentSDK"]),
     ],
+    dependencies: [
+            .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.10.0")
+        ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
+        
         .target(
-            name: "TaskManagmentSDK"),
+            name: "TaskManagmentSDK",
+            dependencies: [
+                         .product(name: "OpenCombine", package: "OpenCombine"),
+                        ]),
         .testTarget(
             name: "TaskManagmentSDKTests",
             dependencies: ["TaskManagmentSDK"]),
