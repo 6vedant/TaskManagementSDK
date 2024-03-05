@@ -7,38 +7,40 @@ import OpenCombine
 
 
 // Model for a task
-struct Task: Identifiable {
-  let id: Int
-  let title: String
+public struct Task: Identifiable {
+  public let id: Int
+  public let title: String
 }
 
 // ViewModel to manage tasks
-class TaskManagmentSDK {
-  static let viewModel = TaskManagmentSDK()
-  private init() {}
+public class TaskManagmentSDK {
+  public static let viewModel = TaskManagmentSDK()
+  public required init() {
+      
+  }
 
-  var tasks: [Task] = [] {
+  private var tasks: [Task] = [] {
     didSet {
       tasksPublisher.send(tasks)
     }
   }
 
-  let tasksPublisher = CurrentValueSubject<[Task], Never>([])
+  private let tasksPublisher = CurrentValueSubject<[Task], Never>([])
 
   private var cancellables: [AnyCancellable] = [] // Use non-optional array
 
 
-  func addTask(_ task: Task) {
+  public func addTask(_ task: Task) {
     tasks.append(task)
     print("Task added: \(task.title)")
   }
 
-  func removeTask(_ task: Task) {
+  public func removeTask(_ task: Task) {
     tasks.remove(at: task.id)
     print("Task removed: \(task.title)")
   }
 
-  func getTasksResultString() -> [String] {
+  public func getTasksResultString() -> [String] {
     var taskStringArray = [String]()
     print("Current tasks:")
     for task in tasks {
@@ -47,7 +49,7 @@ class TaskManagmentSDK {
     return taskStringArray
   }
 
- func subscribeToChanges(handler: @escaping ([Task]) -> Void) {
+ public func subscribeToChanges(handler: @escaping ([Task]) -> Void) {
          tasksPublisher
              .sink { tasks in
                  handler(tasks)
