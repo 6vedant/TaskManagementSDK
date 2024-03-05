@@ -6,12 +6,6 @@ import Foundation
 import OpenCombine
 
 
-// Model for a task
-public struct Task: Identifiable {
-  public let id: Int
-  public let title: String
-}
-
 // ViewModel to manage tasks
 public class TaskManagmentSDK {
   public static let viewModel = TaskManagmentSDK()
