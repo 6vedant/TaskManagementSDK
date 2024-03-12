@@ -67,4 +67,6 @@ Please checkout the [SCADE app](https://github.com/6vedant/TaskManagerApp) that 
 
 <p>Consider contributing by creating a pull request (PR) or opening an issue. By creating an issue, you can alert the repository's maintainers to any bugs or missing documentation you've found. 🐛📝 If you're feeling confident and want to make a bigger impact, creating a PR, can be a great way to help others. 📖💡 Remember, contributing to open source is a collaborative effort, and any contribution, big or small, is always appreciated! 🙌 So why not take the first step and start contributing today? 😊</p>
 
+#### Join SCADE Community: [SCADE Discord Channel](https://discord.gg/6PRedqCK)
+
 
