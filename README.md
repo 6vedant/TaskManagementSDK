@@ -14,35 +14,16 @@ Add the following dependency to your `Package.swift` file:
 import PackageDescription
 import Foundation
 
-let SCADE_SDK = ProcessInfo.processInfo.environment["SCADE_SDK"] ?? ""
-
-let package = Package(
-    name: "TaskManagementSDKConsumer",
-    platforms: [
-        .macOS(.v10_15),
-        .iOS(.v13)
-    ],
-    products: [
-        .library(
-            name: "TaskManagementSDKConsumer",
-            type: .static,
-            targets: ["TaskManagementSDKConsumer"]
-        )
-    ],
     dependencies: [
         .package(url: "https://github.com/6vedant/TaskManagementSDK.git", branch: "main")
     ],
+
     targets: [
         .target(
-            name: "TaskManagementSDKConsumer",
+            name: "YourApp",
             dependencies: [
                 .product(name: "TaskManagementSDK", package: "TaskManagementSDK"),
             ],
-            exclude: ["main.page"],
-            swiftSettings: [
-                .unsafeFlags(["-F", SCADE_SDK], .when(platforms: [.macOS, .iOS])),
-                .unsafeFlags(["-I", "\(SCADE_SDK)/include"], .when(platforms: [.android])),
-            ]
         )
     ]
 )
