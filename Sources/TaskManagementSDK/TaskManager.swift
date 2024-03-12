@@ -50,8 +50,10 @@ public class TaskManager {
     }
     
     public func removeTask(_ task: Task) {
-        tasks.remove(at: task.id)
-        print("Task removed: \(task.title)")
+        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+            tasks.remove(at: index)
+            print("Task removed: \(task.title)")
+        }
     }
     
     public func getAllTasksTitle() -> [String] {
