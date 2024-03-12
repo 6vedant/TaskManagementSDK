@@ -1,6 +1,6 @@
-# TaskManagementSDKConsumer
+# TaskManagementSDK
 
-TaskManagementSDKConsumer is a Swift package that demonstrates the usage of the TaskManagementSDK. It allows you to manage tasks seamlessly using the provided SDK.
+TaskManagementSDK is a Swift package that demonstrates the CRUD operations of Tasks. It allows you to manage tasks seamlessly using the provided SDK.
 
 ## Installation
 
