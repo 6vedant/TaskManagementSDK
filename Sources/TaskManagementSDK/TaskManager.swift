@@ -6,9 +6,9 @@ import Foundation
 import OpenCombine
 
 
-// ViewModel to manage tasks
-public class TaskManagementSDK {
-    public static let viewModel = TaskManagementSDK()
+public class TaskManager {
+    // ViewModel to manage tasks
+    public static let viewModel = TaskManager()
     public required init() {
         
     }
@@ -54,13 +54,17 @@ public class TaskManagementSDK {
         print("Task removed: \(task.title)")
     }
     
-    public func getTasksResultString() -> [String] {
+    public func getAllTasksTitle() -> [String] {
         var taskStringArray = [String]()
         print("Current tasks:")
         for task in tasks {
             taskStringArray.append(task.title)
         }
         return taskStringArray
+    }
+    
+    public func getAllTasks() -> [Task] {
+        return tasks
     }
     
     public func subscribeToChanges(handler: @escaping ([Task]) -> Void) {
