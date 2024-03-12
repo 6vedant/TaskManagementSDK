@@ -1,5 +1,5 @@
 import XCTest
-@testable import TaskManagmentSDK
+@testable import TaskManagementSDK
 
 final class TaskManagmentSDKTests: XCTestCase {
     func testExample() throws {

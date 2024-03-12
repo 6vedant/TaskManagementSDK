@@ -7,8 +7,8 @@ import OpenCombine
 
 
 // ViewModel to manage tasks
-public class TaskManagmentSDK {
-  public static let viewModel = TaskManagmentSDK()
+public class TaskManagementSDK {
+  public static let viewModel = TaskManagementSDK()
   public required init() {
       
   }

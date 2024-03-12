@@ -4,12 +4,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "TaskManagmentSDK",
+    name: "TaskManagementSDK",
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "TaskManagmentSDK",
-            targets: ["TaskManagmentSDK"]),
+            name: "TaskManagementSDK",
+            targets: ["TaskManagementSDK"]),
     ],
     dependencies: [
             .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.10.0")
@@ -19,12 +19,12 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         
         .target(
-            name: "TaskManagmentSDK",
+            name: "TaskManagementSDK",
             dependencies: [
                          .product(name: "OpenCombine", package: "OpenCombine"),
                         ]),
         .testTarget(
-            name: "TaskManagmentSDKTests",
-            dependencies: ["TaskManagmentSDK"]),
+            name: "TaskManagementSDKTests",
+            dependencies: ["TaskManagementSDK"]),
     ]
 )
