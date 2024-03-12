@@ -4,7 +4,7 @@ TaskManagementSDK is a Swift package that demonstrates the CRUD operations of Ta
 
 ## Installation
 
-To integrate TaskManagementSDKConsumer into your project, you can use Swift Package Manager.
+To integrate TaskManagement SDK into your project, you can use Swift Package Manager.
 
 Add the following dependency to your `Package.swift` file:
 
