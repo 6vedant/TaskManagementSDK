@@ -69,6 +69,8 @@ public class TaskManager {
     public func updateTask(id: String, newTaskTitle: String) -> Task {
         if let index = tasks.firstIndex(where: { $0.id == id }) {
             tasks[index].title = newTaskTitle
+            // Publish the updated tasks array
+            tasksPublisher.send(tasks)
             print("Task updated - New Title: \(newTaskTitle)")
         }
         return Task(id: id, title: newTaskTitle)
