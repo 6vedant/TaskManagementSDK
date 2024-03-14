@@ -107,6 +107,9 @@ public class TaskManager {
     /// Note: One has to loop through each task if there is an update to any task title
     ///
     /// - Parameter handler: A closure to be executed when tasks are updated.
+    /// Subscribes to changes in tasks.
+    ///
+    /// - Parameter handler: A closure to be executed when tasks are updated.
     public func subscribeToChanges(handler: @escaping (Task) -> Void) {
         tasksPublisher
             .sink { [weak self] tasks in
@@ -119,9 +122,21 @@ public class TaskManager {
                             // If the title has changed, publish the updated task
                             handler(updatedTask)
                         }
+                    } else {
+                        // If the task is new (not found in previous tasks), publish it
+                        handler(updatedTask)
+                    }
+                }
+                // Check for deleted tasks
+                for previousTask in self?.tasks ?? [] {
+                    if !tasks.contains(where: { $0.id == previousTask.id }) {
+                        // If the task has been deleted, publish it with an empty title
+                        let deletedTask = Task(id: previousTask.id, title: "")
+                        handler(deletedTask)
                     }
                 }
             }
             .store(in: &cancellables)
     }
+
 }
