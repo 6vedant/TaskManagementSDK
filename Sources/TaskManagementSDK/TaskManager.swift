@@ -109,10 +109,17 @@ public class TaskManager {
     /// - Parameter handler: A closure to be executed when tasks are updated.
     public func subscribeToChanges(handler: @escaping (Task) -> Void) {
         tasksPublisher
-            .sink { tasks in
-                // Loop through the updated tasks and publish each one individually
-                for task in tasks {
-                    handler(task)
+            .sink { [weak self] tasks in
+                // Loop through the updated tasks
+                for updatedTask in tasks {
+                    // Find the corresponding previous task by ID
+                    if let previousTask = self?.tasks.first(where: { $0.id == updatedTask.id }) {
+                        // Compare the titles of the previous and updated tasks
+                        if previousTask.title != updatedTask.title {
+                            // If the title has changed, publish the updated task
+                            handler(updatedTask)
+                        }
+                    }
                 }
             }
             .store(in: &cancellables)
