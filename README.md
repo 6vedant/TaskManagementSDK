@@ -2,8 +2,6 @@
 
 TaskManagementSDK is a Swift package that demonstrates the CRUD operations of Tasks. It allows you to manage tasks seamlessly using the provided SDK.
 
-![Task Management App Demo](images/app.gif)
-
 ## Installation
 
 To integrate TaskManagement SDK into your project, you can use Swift Package Manager.
