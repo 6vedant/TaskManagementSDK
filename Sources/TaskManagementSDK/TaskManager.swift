@@ -104,12 +104,16 @@ public class TaskManager {
     }
     
     /// Subscribes to changes in tasks.
+    /// Note: One has to loop through each task if there is an update to any task title
     ///
     /// - Parameter handler: A closure to be executed when tasks are updated.
-    public func subscribeToChanges(handler: @escaping ([Task]) -> Void) {
+    public func subscribeToChanges(handler: @escaping (Task) -> Void) {
         tasksPublisher
             .sink { tasks in
-                handler(tasks)
+                // Loop through the updated tasks and publish each one individually
+                for task in tasks {
+                    handler(task)
+                }
             }
             .store(in: &cancellables)
     }
