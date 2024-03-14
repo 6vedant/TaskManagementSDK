@@ -43,7 +43,7 @@ public class TaskManager {
     /// - Parameter task: The title of the task to be added.
     /// - Returns: The newly added task.
     public func addTask(_ task: String) -> Task {
-        let newTaskID = generateUniqueID()
+        let newTaskID = "tid\(generateUniqueID())"
         let newTask = Task(id: newTaskID, title: task)
         tasks.append(newTask)
         print("Task added: \(newTask.title)")
@@ -66,7 +66,7 @@ public class TaskManager {
     ///   - id: The ID of the task to be updated.
     ///   - newTaskTitle: The new title for the task.
     /// - Returns: The updated task.
-    public func updateTask(id: Int, newTaskTitle: String) -> Task {
+    public func updateTask(id: String, newTaskTitle: String) -> Task {
         if let index = tasks.firstIndex(where: { $0.id == id }) {
             tasks[index].title = newTaskTitle
             print("Task updated - New Title: \(newTaskTitle)")

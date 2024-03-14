@@ -9,13 +9,13 @@ import Foundation
 
 public class Task: NSObject, Identifiable {
     
-    public init(id: Int, title: String) {
+    public init(id: String, title: String) {
         self.id = id
         self.title = title
     }
     
-    // The merchant's ISO country code.
-    public var id: Int
+    // id of the Task
+    public var id: String
     
     // title of the Task
     public var title: String
