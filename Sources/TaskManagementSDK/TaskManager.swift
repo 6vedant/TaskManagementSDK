@@ -135,8 +135,11 @@ public class TaskManager {
                         handler(deletedTask)
                     }
                 }
+                // If there are no tasks in the update, and there were no tasks before, handle the empty case
+                if self?.tasks.isEmpty == true && tasks.isEmpty {
+                    handler(Task(id: "", title: "")) // Publish an empty task to indicate an empty task list
+                }
             }
             .store(in: &cancellables)
     }
-
 }
