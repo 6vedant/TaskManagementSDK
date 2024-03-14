@@ -1,6 +1,6 @@
 /*
  Author: Vedant Jha | SCADE
-*/
+ */
 
 import Dispatch
 import Foundation
@@ -112,32 +112,10 @@ public class TaskManager {
     /// - Parameter handler: A closure to be executed when tasks are updated.
     public func subscribeToChanges(handler: @escaping (Task) -> Void) {
         tasksPublisher
-            .sink { [weak self] tasks in
-                // Loop through the updated tasks
-                for updatedTask in tasks {
-                    // Find the corresponding previous task by ID
-                    if let previousTask = self?.tasks.first(where: { $0.id == updatedTask.id }) {
-                        // Compare the titles of the previous and updated tasks
-                        if previousTask.title != updatedTask.title {
-                            // If the title has changed, publish the updated task
-                            handler(updatedTask)
-                        }
-                    } else {
-                        // If the task is new (not found in previous tasks), publish it
-                        handler(updatedTask)
-                    }
-                }
-                // Check for deleted tasks
-                for previousTask in self?.tasks ?? [] {
-                    if !tasks.contains(where: { $0.id == previousTask.id }) {
-                        // If the task has been deleted, publish it with an empty title
-                        let deletedTask = Task(id: previousTask.id, title: "")
-                        handler(deletedTask)
-                    }
-                }
-                // If there are no tasks in the update, and there were no tasks before, handle the empty case
-                if self?.tasks.isEmpty == true && tasks.isEmpty {
-                    handler(Task(id: "", title: "")) // Publish an empty task to indicate an empty task list
+            .sink { tasks in
+                // Loop through the updated tasks and publish each one individually
+                for task in tasks {
+                    handler(task)
                 }
             }
             .store(in: &cancellables)
