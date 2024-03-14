@@ -58,9 +58,13 @@ print("Updated tasks: \(newTasks ?? [])")
 ```
 This code snippet demonstrates the basic usage of the TaskManagementSDK library.
 
+## Android Studio App Example
+Please checkout the [Android app](https://github.com/6vedant/swift-for-android-task-management-app) that uses this SDK to build a simple Task Management App.
+
 
 ## SCADE App Example
 Please checkout the [SCADE app](https://github.com/6vedant/TaskManagerApp) that uses this SDK to build a simple Task Management App.
+
 
 
 ## Contribution
