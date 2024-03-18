@@ -40,7 +40,7 @@ weak var viewModel: TaskManager?
 viewModel = TaskManager.viewModel
 
 // Add tasks
-let task = viewModel?.addTask("Task1")
+let task1 = viewModel?.addTask("Task1")
 let task2 = viewModel?.addTask("Task2")
 let task3 = viewModel?.addTask("Task3")
 let task4 = viewModel?.addTask("Task4")
