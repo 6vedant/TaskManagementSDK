@@ -1,12 +1,30 @@
 {
   "pins" : [
     {
+      "identity" : "csqlite",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scade-platform/CSQLite.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "a30b194051ca5129956de23bb221892e5e98ba21"
+      }
+    },
+    {
       "identity" : "opencombine",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/OpenCombine/OpenCombine.git",
       "state" : {
         "revision" : "8576f0d579b27020beccbccc3ea6844f3ddfc2c2",
         "version" : "0.14.0"
+      }
+    },
+    {
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scade-platform/SQLite.swift.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "6374e199cc703eb8e4f58a48fb656ea1d44da9e1"
       }
     }
   ],
