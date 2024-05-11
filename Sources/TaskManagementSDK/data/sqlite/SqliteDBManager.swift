@@ -8,21 +8,40 @@
 import Foundation
 import SQLite
 
+/**
+ A class that manages SQLite database operations for tasks.
+ */
 public class SqliteDBManager {
+    
+    /// The SQLite database connection.
     private var db: Connection!
+    
+    /// The SQLite table for storing tasks.
     private let taskTable = Table("tasks")
+    
+    /// The column representing the task ID in the SQLite table.
     private let id = Expression<String>("id")
+    
+    /// The column representing the task title in the SQLite table.
     private let title = Expression<String>("title")
-
+    
+    /**
+     Initializes a new instance of the `SqliteDBManager`.
+     
+     - Parameter databasePath: The file path of the SQLite database.
+     */
     public init(databasePath: String) {
         do {
             db = try Connection(databasePath)
             createTable()
         } catch {
-            print("error creating database")
+            print("Error creating database: \(error)")
         }
     }
     
+    /**
+     Creates the task table in the SQLite database if it doesn't exist.
+     */
     private func createTable() {
         do {
             _ = try db.run(taskTable.create { t in
@@ -34,6 +53,12 @@ public class SqliteDBManager {
         }
     }
     
+    /**
+     Adds a task to the SQLite database.
+     
+     - Parameter task: The task to be added.
+     - Returns: `true` if the task is successfully added, otherwise `false`.
+     */
     public func addTask(task: Task) -> Bool {
         do {
             let insert = taskTable.insert(id <- task.id, title <- task.title)
@@ -45,6 +70,12 @@ public class SqliteDBManager {
         }
     }
     
+    /**
+     Updates a task in the SQLite database.
+     
+     - Parameter task: The task to be updated.
+     - Returns: `true` if the task is successfully updated, otherwise `false`.
+     */
     public func updateTask(task: Task) -> Bool {
         let taskToUpdate = taskTable.filter(id == task.id)
         do {
@@ -56,6 +87,12 @@ public class SqliteDBManager {
         }
     }
     
+    /**
+     Deletes a task from the SQLite database.
+     
+     - Parameter id: The ID of the task to be deleted.
+     - Returns: `true` if the task is successfully deleted, otherwise `false`.
+     */
     public func deleteTask(id: String) -> Bool {
         let taskToDelete = taskTable.filter(self.id == id)
         do {
@@ -67,6 +104,11 @@ public class SqliteDBManager {
         }
     }
     
+    /**
+     Retrieves all tasks from the SQLite database.
+     
+     - Returns: An array containing all tasks.
+     */
     public func getAllTasks() -> [Task] {
         var allTasks = [Task]()
         do {

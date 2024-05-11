@@ -12,6 +12,8 @@ public class TaskManager {
     
     /// The shared instance of the `TaskManager`.
     public static let viewModel = TaskManager()
+    
+    /// The Sqlite instance to do CRUD operations
     private var sqliteDbManager: SqliteDBManager!
     
     /// The array containing tasks.
@@ -25,6 +27,7 @@ public class TaskManager {
     }
     
     /// Initializes a new instance of the `TaskManager`.
+    ///  Initalize the database instance
     public required init() {
         sqliteDbManager = SqliteDBManager(databasePath: "\(NSHomeDirectory())/task_sqlite_db.db")
     }
@@ -48,10 +51,11 @@ public class TaskManager {
         let newTask = Task(id: newTaskID, title: task)
         tasks.append(newTask)
         print("Task added: \(newTask.title)")
-        // add task to local db
+        
+        // add task to sqlite db
         let taskAdded = sqliteDbManager.addTask(task: newTask)
         if !taskAdded {
-            print("Unable to add Task \(newTask.title) to local db")
+            print("Unable to add Task \(newTask.title) to sqlite db")
         }
         return newTask
     }
@@ -79,13 +83,15 @@ public class TaskManager {
             tasksPublisher.send(tasks)
         }
         let updatedTask =  Task(id: id, title: newTaskTitle)
+        
+        // Update the task in sqlite DB
         let isTaskUpdated = sqliteDbManager.updateTask(task: updatedTask)
         if !isTaskUpdated {
             print("Error updating task for id: \(id)")
         }
         return updatedTask
     }
- 
+    
     
     /// Removes the specified task from the array.
     ///
@@ -93,6 +99,8 @@ public class TaskManager {
     public func removeTask(_ task: Task) {
         if let index = tasks.firstIndex(where: { $0.id == task.id }) {
             tasks.remove(at: index)
+            
+            // Remove the task from Sqlite DB
             let isRemoved = sqliteDbManager.deleteTask(id: task.id)
             if !isRemoved {
                 print("Unable to removed task \(task.title)")
@@ -106,6 +114,7 @@ public class TaskManager {
     ///
     /// - Returns: An array of tasks.
     public func getAllTasks() -> [Task] {
+        // Initialize the tasks with the Sqlite data
         if(tasks.isEmpty) {
             tasks = sqliteDbManager.getAllTasks()
         }
