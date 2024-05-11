@@ -14,7 +14,7 @@ public class TaskManager {
     public static let viewModel = TaskManager()
     
     /// The Sqlite instance to do CRUD operations
-    private var sqliteDbManager: SqliteDBManager!
+    private var sqliteDbManager: SqliteDBManager?
     
     /// The array containing tasks.
     ///
@@ -53,10 +53,7 @@ public class TaskManager {
         print("Task added: \(newTask.title)")
         
         // add task to sqlite db
-        let taskAdded = sqliteDbManager.addTask(task: newTask)
-        if !taskAdded {
-            print("Unable to add Task \(newTask.title) to sqlite db")
-        }
+        let taskAdded = sqliteDbManager?.addTask(task: newTask)
         return newTask
     }
     
@@ -85,10 +82,7 @@ public class TaskManager {
         let updatedTask =  Task(id: id, title: newTaskTitle)
         
         // Update the task in sqlite DB
-        let isTaskUpdated = sqliteDbManager.updateTask(task: updatedTask)
-        if !isTaskUpdated {
-            print("Error updating task for id: \(id)")
-        }
+        let isTaskUpdated = sqliteDbManager?.updateTask(task: updatedTask)
         return updatedTask
     }
     
@@ -101,12 +95,7 @@ public class TaskManager {
             tasks.remove(at: index)
             
             // Remove the task from Sqlite DB
-            let isRemoved = sqliteDbManager.deleteTask(id: task.id)
-            if !isRemoved {
-                print("Unable to removed task \(task.title)")
-            } else {
-                print("Task removed: \(task.title)")
-            }
+            let isRemoved = sqliteDbManager?.deleteTask(id: task.id)
         }
     }
     
@@ -116,7 +105,7 @@ public class TaskManager {
     public func getAllTasks() -> [Task] {
         // Initialize the tasks with the Sqlite data
         if (tasks.count == 0) {
-            if let dbTasks = sqliteDbManager.getAllTasks() {
+            if let dbTasks = sqliteDbManager?.getAllTasks() {
                 tasks = dbTasks
             }
         }
