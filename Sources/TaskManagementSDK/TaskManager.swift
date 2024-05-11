@@ -121,7 +121,7 @@ public class TaskManager {
             .store(in: &cancellables)
     }
     
-    public func testSQLite() {
+    public func testSQLite() -> String {
         do {
             let db = try Connection(NSHomeDirectory() + "/data.db")
 
@@ -144,10 +144,12 @@ public class TaskManager {
 
             let insert = users.insert(name <- "Alice", email <- "alice@mac.com")
             let rowid = try db.run(insert)
+            var result = "empty"
             // INSERT INTO "users" ("name", "email") VALUES ('Alice', 'alice@mac.com')
 
             for user in try db.prepare(users) {
                 print("id: \(user[id]), name: \(user[name] ?? "null"), email: \(user[email])")
+                result = result + " \(user[name] ?? "vedant ")"
                 // id: 1, name: Optional("Alice"), email: alice@mac.com
             }
             // SELECT * FROM "users"
@@ -163,9 +165,11 @@ public class TaskManager {
 
             let _ = try db.scalar(users.count) // 0
             // SELECT count(*) FROM "users"
+            return result
         }
         catch {
             print("ERROR: \(error)")
         }
+        return "nill173"
     }
 }
