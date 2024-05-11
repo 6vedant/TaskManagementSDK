@@ -17,7 +17,7 @@ final class TaskManagmentSDKTests: XCTestCase {
         
         // Then
         XCTAssertEqual(addedTask.title, taskTitle)
-        XCTAssertTrue(taskManager.getAllTasks().contains(addedTask))
+        XCTAssertTrue(((taskManager.getAllTasks()?.contains(addedTask)) != nil))
     }
     
     func testUpdateTask() throws {
@@ -31,8 +31,8 @@ final class TaskManagmentSDKTests: XCTestCase {
         
         // Then
         XCTAssertEqual(updatedTask.title, updatedTaskTitle)
-        XCTAssertTrue(taskManager.getAllTasks().contains(updatedTask))
-        XCTAssertFalse(taskManager.getAllTasks().contains(addedTask))
+        XCTAssertTrue(((taskManager.getAllTasks()?.contains(updatedTask)) != nil))
+        XCTAssertFalse(((taskManager.getAllTasks()?.contains(addedTask)) != nil))
     }
     
     func testRemoveTask() throws {
@@ -44,6 +44,6 @@ final class TaskManagmentSDKTests: XCTestCase {
         taskManager.removeTask(addedTask)
         
         // Then
-        XCTAssertFalse(taskManager.getAllTasks().contains(addedTask))
+        XCTAssertFalse(((taskManager.getAllTasks()?.contains(addedTask)) != nil))
     }
 }
