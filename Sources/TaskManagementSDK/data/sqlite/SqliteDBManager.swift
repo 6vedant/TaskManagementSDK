@@ -48,8 +48,18 @@ public class SqliteDBManager {
                 t.column(id, primaryKey: true)
                 t.column(title)
             })
+            addDefaultTask()
         } catch {
             print("Error creating table: \(error)")
+        }
+    }
+    
+    private func addDefaultTask() {
+        let defaultTask = Task(id: "-1", title: "Default")
+        addTask(task: defaultTask)
+        // if default task is already there, then delete it
+        if getAllTasks().count > 1 {
+            deleteTask(id: "-1")
         }
     }
     
@@ -109,7 +119,7 @@ public class SqliteDBManager {
      
      - Returns: An array containing all tasks.
      */
-    public func getAllTasks() -> [Task]? {
+    public func getAllTasks() -> [Task] {
         var allTasks = [Task]()
         do {
             for task in try db.prepare(taskTable) {
