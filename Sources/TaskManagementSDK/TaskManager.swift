@@ -115,8 +115,12 @@ public class TaskManager {
     /// - Returns: An array of tasks.
     public func getAllTasks() -> [Task] {
         // Initialize the tasks with the Sqlite data
+        let allTasks: [Task] = []
         if(tasks.isEmpty) {
             tasks = sqliteDbManager.getAllTasks()
+        }
+        if(tasks.isEmpty) {
+            return allTasks
         }
         return tasks
     }

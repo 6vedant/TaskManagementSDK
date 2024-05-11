@@ -17,7 +17,7 @@ final class TaskManagmentSDKTests: XCTestCase {
         
         // Then
         XCTAssertEqual(addedTask.title, taskTitle)
-        XCTAssertTrue(((taskManager.getAllTasks()?.contains(addedTask)) != nil))
+        XCTAssertTrue(((taskManager.getAllTasks().contains(addedTask)) != nil))
     }
 //    
 //    func testUpdateTask() throws {
