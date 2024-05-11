@@ -12,7 +12,7 @@ public class TaskManager {
     
     /// The shared instance of the `TaskManager`.
     public static let viewModel = TaskManager()
-    let sqliteDbManager = SqliteDBManager(databasePath: "\(NSHomeDirectory())/task_sqlite_db.db")
+    private var sqliteDbManager: SqliteDBManager
     
     /// The array containing tasks.
     ///
@@ -26,6 +26,7 @@ public class TaskManager {
     
     /// Initializes a new instance of the `TaskManager`.
     public required init() {
+        sqliteDbManager = SqliteDBManager(databasePath: "\(NSHomeDirectory())/task_sqlite_db.db")
     }
     
     /// A subject that publishes an array of tasks.
