@@ -12,7 +12,8 @@ let package = Package(
             targets: ["TaskManagementSDK"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.10.0")
+        .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.10.0"),
+        .package(url: "https://github.com/scade-platform/SQLite.swift.git", branch: "master")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -22,6 +23,7 @@ let package = Package(
             name: "TaskManagementSDK",
             dependencies: [
                 .product(name: "OpenCombine", package: "OpenCombine"),
+                .product(name: "SQLite", package: "SQLite.swift")
             ]),
         .testTarget(
             name: "TaskManagementSDKTests",
