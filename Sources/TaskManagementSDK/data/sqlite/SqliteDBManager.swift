@@ -109,7 +109,7 @@ public class SqliteDBManager {
      
      - Returns: An array containing all tasks.
      */
-    public func getAllTasks() -> [Task]? {
+    public func getAllTasks() -> [Task] {
         var allTasks = [Task]()
         do {
             for task in try db.prepare(taskTable) {
