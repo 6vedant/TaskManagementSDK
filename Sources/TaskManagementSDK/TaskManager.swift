@@ -156,15 +156,15 @@ public class TaskManager {
 
             let alice = users.filter(id == rowid)
         
-            try db.run(alice.update(email <- email.replace("mac.com", with: "me.com")))
-            // UPDATE "users" SET "email" = replace("email", 'mac.com', 'me.com')
-            // WHERE ("id" = 1)
-
-            try db.run(alice.delete())
-            // DELETE FROM "users" WHERE ("id" = 1)
-
-            let _ = try db.scalar(users.count) // 0
-            // SELECT count(*) FROM "users"
+//            try db.run(alice.update(email <- email.replace("mac.com", with: "me.com")))
+//            // UPDATE "users" SET "email" = replace("email", 'mac.com', 'me.com')
+//            // WHERE ("id" = 1)
+//
+//            try db.run(alice.delete())
+//            // DELETE FROM "users" WHERE ("id" = 1)
+//
+//            let _ = try db.scalar(users.count) // 0
+//            // SELECT count(*) FROM "users"
             return result
         }
         catch {
