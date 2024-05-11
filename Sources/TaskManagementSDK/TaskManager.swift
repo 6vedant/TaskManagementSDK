@@ -57,6 +57,7 @@ public class TaskManager {
     /// to subscribers through the `tasksPublisher`.
     private var tasks: [Task] = [] {
         didSet {
+            initalizeTasksFromLocalDB()
             tasksPublisher.send(tasks)
         }
     }
