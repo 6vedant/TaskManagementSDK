@@ -12,7 +12,7 @@ public class TaskManager {
     
     /// The shared instance of the `TaskManager`.
     public static let viewModel = TaskManager()
-    private var sqliteDbManager: SqliteDBManager
+    private var sqliteDbManager: SqliteDBManager!
     
     /// The array containing tasks.
     ///
@@ -107,7 +107,7 @@ public class TaskManager {
     /// - Returns: An array of tasks.
     public func getAllTasks() -> [Task] {
         if(tasks.isEmpty) {
-            tasks = sqliteDbManager.getAllTasks()
+           // tasks = sqliteDbManager.getAllTasks()
         }
         return tasks
     }
