@@ -143,7 +143,13 @@ public class TaskManager {
             // )
 
             let insert = users.insert(name <- "Alice", email <- "alice@mac.com")
+            let insert2 = users.insert(name <- "Alice2", email <- "al2ice@mac.com")
+            let insert3 = users.insert(name <- "Alice3", email <- "ali3ce@mac.com")
+            
             let rowid = try db.run(insert)
+            let rowid2 = try db.run(insert)
+            let rowid3 = try db.run(insert)
+            
             var result = "empty"
             // INSERT INTO "users" ("name", "email") VALUES ('Alice', 'alice@mac.com')
 
