@@ -19,8 +19,19 @@ public class TaskManager {
     private let id = Expression<String>("id")
       private let title = Expression<String>("title")
     
+    /// The array containing tasks.
+    ///
+    /// Tasks are stored in this array, and changes to the array trigger notifications
+    /// to subscribers through the `tasksPublisher`.
+    private var tasks: [Task] = [] {
+        didSet {
+            tasksPublisher.send(tasks)
+        }
+    }
+    
     /// Initializes a new instance of the `TaskManager`.
     public required init() {
+        
         do {
             db = try Connection(NSHomeDirectory() + "/data.db")
             createTable()
@@ -51,16 +62,7 @@ public class TaskManager {
         }
     }
     
-    /// The array containing tasks.
-    ///
-    /// Tasks are stored in this array, and changes to the array trigger notifications
-    /// to subscribers through the `tasksPublisher`.
-    private var tasks: [Task] = [] {
-        didSet {
-            initalizeTasksFromLocalDB()
-            tasksPublisher.send(tasks)
-        }
-    }
+    
     
     /// A subject that publishes an array of tasks.
     ///
