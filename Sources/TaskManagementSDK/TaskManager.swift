@@ -114,17 +114,18 @@ public class TaskManager {
     ///
     /// - Returns: An array of tasks.
     public func getAllTasks() -> [Task] {
-        // Initialize the tasks with the Sqlite data
-        let allTasks: [Task] = []
-        if(tasks.isEmpty) {
+        // Check if tasks is nil
+        if tasks == nil {
+            // If tasks is nil, initialize it with SQLite data
+            tasks = sqliteDbManager.getAllTasks()
+        } else if tasks.isEmpty {
+            // If tasks is not nil but empty, fetch tasks from SQLite
             tasks = sqliteDbManager.getAllTasks()
         }
-        if(tasks.isEmpty) {
-            return allTasks
-        }
-        return tasks
+        
+        // Return tasks (if not nil)
+        return tasks ?? []
     }
-    
     /// Subscribes to changes in tasks.
     /// Note: One has to loop through each task if there is an update to any task title
     ///
