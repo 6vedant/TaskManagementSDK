@@ -14,9 +14,41 @@ public class TaskManager {
     /// The shared instance of the `TaskManager`.
     public static let viewModel = TaskManager()
     
+    private var db: Connection!
+    private var taskTable: Table!
+    private let id = Expression<String>("id")
+      private let title = Expression<String>("title")
+    
     /// Initializes a new instance of the `TaskManager`.
     public required init() {
+        do {
+            db = try Connection(NSHomeDirectory() + "/data.db")
+            createTable()
+        } catch {
+            print("Error creating database!")
+        }
         
+    }
+    
+    private func createTable() {
+         taskTable = Table("tasks")
+     
+           do {
+               _ = try db.run(taskTable.create { t in
+                   t.column(id, primaryKey: true)
+                   t.column(title)
+               })
+               initalizeTasksFromLocalDB()
+           } catch {
+               print("Error creating table: \(error)")
+           }
+       }
+    
+    private func initalizeTasksFromLocalDB() {
+        let defaultTasks = getAllTasksFromLocalDB()
+        for task in defaultTasks {
+            tasks.append(task)
+        }
     }
     
     /// The array containing tasks.
@@ -48,8 +80,23 @@ public class TaskManager {
         let newTask = Task(id: newTaskID, title: task)
         tasks.append(newTask)
         print("Task added: \(newTask.title)")
+         let taskAdded = addTaskToLocalDB(task: newTask)
+        if !taskAdded {
+            print("Unable to add Task \(newTask.title) to local db")
+        }
         return newTask
     }
+    
+    public func addTaskToLocalDB(task: Task) -> Bool {
+            do {
+                let insert = taskTable.insert(id <- task.id, title <- task.title)
+                try db.run(insert)
+                return true
+            } catch {
+                print("Error adding task: \(error)")
+                return false
+            }
+        }
     
     /// Generates a unique ID for tasks based on the current timestamp and a random value.
     ///
@@ -74,8 +121,12 @@ public class TaskManager {
             tasksPublisher.send(tasks)
             print("Task updated - New Title: \(newTaskTitle)")
         }
-        return Task(id: id, title: newTaskTitle)
+        let updatedTask =  Task(id: id, title: newTaskTitle)
+     //   updateTaskInLocalDb(taskToUpdate: updatedTask)
+        return updatedTask
     }
+    
+ 
     
     /// Removes the specified task from the array.
     ///
@@ -83,9 +134,25 @@ public class TaskManager {
     public func removeTask(_ task: Task) {
         if let index = tasks.firstIndex(where: { $0.id == task.id }) {
             tasks.remove(at: index)
-            print("Task removed: \(task.title)")
+            let isRemoved = removeFromLocalDB(id: task.id)
+            if !isRemoved {
+                print("Unable to removed task \(task.title)")
+            } else {
+                print("Task removed: \(task.title)")
+            }
         }
     }
+    
+    public func removeFromLocalDB(id: String) -> Bool {
+           let taskToDelete = taskTable.filter(self.id == id)
+           do {
+               try db.run(taskToDelete.delete())
+               return true
+           } catch {
+               print("Error deleting task: \(error)")
+               return false
+           }
+       }
     
     /// Gets an array containing the titles of all tasks.
     ///
@@ -97,6 +164,19 @@ public class TaskManager {
             taskStringArray.append(task.title)
         }
         return taskStringArray
+    }
+    
+    public func getAllTasksFromLocalDB() -> [Task] {
+        var allTasks = [Task]()
+                do {
+                    for task in try db.prepare(taskTable) {
+                        let newTask = Task(id: task[id], title: task[title])
+                        allTasks.append(newTask)
+                    }
+                } catch {
+                    print("Error fetching tasks: \(error)")
+                }
+                return allTasks
     }
     
     /// Gets an array containing all tasks.
@@ -120,6 +200,7 @@ public class TaskManager {
             }
             .store(in: &cancellables)
     }
+    
     
     public func testSQLite() -> String {
         do {
