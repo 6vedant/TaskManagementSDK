@@ -121,6 +121,10 @@ public class TaskManager {
         return tasks
     }
     
+    public func getTaskCount() -> Int {
+        return tasks.count
+    }
+    
     /// Subscribes to changes in tasks.
     /// Note: One has to loop through each task if there is an update to any task title
     ///
