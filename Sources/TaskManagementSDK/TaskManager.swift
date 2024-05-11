@@ -105,8 +105,8 @@ public class TaskManager {
     public func getAllTasks() -> [Task] {
         // Initialize the tasks with the Sqlite data
         if (tasks.count == 0) {
-            if let dbTasks = sqliteDbManager?.getAllTasks() {
-                tasks = dbTasks
+            if (sqliteDbManager?.getAllTasks().count)! > 1 {
+                tasks = (sqliteDbManager?.getAllTasks())!
             }
         }
         return tasks
