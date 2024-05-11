@@ -121,7 +121,10 @@ public class TaskManager {
         return tasks
     }
     
-    public func getTaskCount() -> Int {
+    /// Gets an array containing all tasks.
+    ///
+    /// - Returns: The count of tasks.
+    public func getTasksCount() -> Int {
         return tasks.count
     }
     
