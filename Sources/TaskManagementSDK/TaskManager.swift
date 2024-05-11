@@ -20,9 +20,9 @@ public class TaskManager {
     ///
     /// Tasks are stored in this array, and changes to the array trigger notifications
     /// to subscribers through the `tasksPublisher`.
-    private var tasks: [Task] = [] {
+    private var tasks: [Task]? = [] {
         didSet {
-            tasksPublisher.send(tasks)
+            tasksPublisher.send(tasks ?? [])
         }
     }
     
@@ -49,7 +49,7 @@ public class TaskManager {
     public func addTask(_ task: String) -> Task {
         let newTaskID = "tid\(generateUniqueID())"
         let newTask = Task(id: newTaskID, title: task)
-        tasks.append(newTask)
+        tasks?.append(newTask)
         print("Task added: \(newTask.title)")
         
         // add task to sqlite db
@@ -77,10 +77,10 @@ public class TaskManager {
     ///   - newTaskTitle: The new title for the task.
     /// - Returns: The updated task.
     public func updateTask(id: String, newTaskTitle: String) -> Task {
-        if let index = tasks.firstIndex(where: { $0.id == id }) {
-            tasks[index].title = newTaskTitle
+        if let index = tasks?.firstIndex(where: { $0.id == id }) {
+            tasks?[index].title = newTaskTitle
             // Publish the updated tasks array
-            tasksPublisher.send(tasks)
+            tasksPublisher.send(tasks ?? [])
         }
         let updatedTask =  Task(id: id, title: newTaskTitle)
         
@@ -97,8 +97,8 @@ public class TaskManager {
     ///
     /// - Parameter task: The task to be removed.
     public func removeTask(_ task: Task) {
-        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
-            tasks.remove(at: index)
+        if let index = tasks?.firstIndex(where: { $0.id == task.id }) {
+            tasks?.remove(at: index)
             
             // Remove the task from Sqlite DB
             let isRemoved = sqliteDbManager.deleteTask(id: task.id)
@@ -114,16 +114,10 @@ public class TaskManager {
     ///
     /// - Returns: An array of tasks.
     public func getAllTasks() -> [Task] {
-        // Check if tasks is nil
-        if tasks == nil {
-            // If tasks is nil, initialize it with SQLite data
-            tasks = sqliteDbManager.getAllTasks()
-        } else if tasks.isEmpty {
-            // If tasks is not nil but empty, fetch tasks from SQLite
+        if ((tasks?.isEmpty) != nil) {
             tasks = sqliteDbManager.getAllTasks()
         }
-        
-        // Return tasks (if not nil)
+       
         return tasks ?? []
     }
     /// Subscribes to changes in tasks.
