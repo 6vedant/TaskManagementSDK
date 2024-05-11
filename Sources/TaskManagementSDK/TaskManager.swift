@@ -113,12 +113,25 @@ public class TaskManager {
             tasks[index].title = newTaskTitle
             // Publish the updated tasks array
             tasksPublisher.send(tasks)
-            print("Task updated - New Title: \(newTaskTitle)")
         }
         let updatedTask =  Task(id: id, title: newTaskTitle)
-     //   updateTaskInLocalDb(taskToUpdate: updatedTask)
+        let isTaskUpdated = updateTaskInLocalDb(task: updatedTask)
+        if !isTaskUpdated {
+            print("Error updating task for id: \(id)")
+        }
         return updatedTask
     }
+    
+    public func updateTaskInLocalDb(task: Task) -> Bool {
+            let taskToUpdate = taskTable.filter(id == task.id)
+            do {
+                try db.run(taskToUpdate.update(title <- task.title))
+                return true
+            } catch {
+                print("Error updating task: \(error)")
+                return false
+            }
+        }
     
  
     
