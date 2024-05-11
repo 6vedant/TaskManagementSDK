@@ -49,19 +49,10 @@ public class TaskManager {
                    t.column(id, primaryKey: true)
                    t.column(title)
                })
-               initalizeTasksFromLocalDB()
            } catch {
                print("Error creating table: \(error)")
            }
        }
-    
-    private func initalizeTasksFromLocalDB() {
-        let defaultTasks = getAllTasksFromLocalDB()
-        for task in defaultTasks {
-            tasks.append(task)
-        }
-    }
-    
     
     
     /// A subject that publishes an array of tasks.
@@ -186,6 +177,9 @@ public class TaskManager {
     ///
     /// - Returns: An array of tasks.
     public func getAllTasks() -> [Task] {
+        if(tasks.isEmpty) {
+            tasks = getAllTasksFromLocalDB()
+        }
         return tasks
     }
     
