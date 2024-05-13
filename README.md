@@ -1,6 +1,6 @@
 # TaskManagementSDK
 
-TaskManagementSDK is a Swift package that demonstrates the CRUD operations of Tasks. It allows you to manage tasks seamlessly using the provided SDK.
+TaskManagementSDK is a Swift package that demonstrates the CRUD operations of Tasks. It allows you to manage tasks seamlessly using the provided SDK. It is inbuilt with offline support with SQLite. 
 
 ## Installation
 
@@ -59,7 +59,7 @@ print("Updated tasks: \(newTasks ?? [])")
 This code snippet demonstrates the basic usage of the TaskManagementSDK library.
 
 ## Android Studio App Example
-Please checkout the [Android app](https://github.com/6vedant/swift-for-android-task-management-app) that uses this SDK to build a simple Task Management App.
+Please checkout the [Android app](https://github.com/6vedant/TaskManagementSDKConsumer) that uses this SDK to build a simple Task Management App.
 
 
 ## SCADE App Example
