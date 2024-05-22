@@ -1,11 +1,6 @@
-/*
- Author: Vedant Jha | SCADE
- */
-
 import Dispatch
 import Foundation
 import OpenCombine
-
 
 /// A class that manages tasks.
 public class TaskManager {
@@ -27,7 +22,7 @@ public class TaskManager {
     }
     
     /// Initializes a new instance of the `TaskManager`.
-    ///  Initalize the database instance
+    /// Initalize the database instance
     public required init() {
         sqliteDbManager = SqliteDBManager(databasePath: "\(NSHomeDirectory())/task_sqlite_db.db")
     }
@@ -42,18 +37,35 @@ public class TaskManager {
     /// Cancellables are stored in this array to manage the lifecycle of subscriptions.
     private var cancellables: [AnyCancellable] = [] // Use non-optional array
     
-    /// Adds a new task with the specified title.
+    /// Adds a new task with the specified properties.
     ///
-    /// - Parameter task: The title of the task to be added.
+    /// - Parameter title: The title of the task to be added.
+    /// - Parameter description: The description of the task.
+    /// - Parameter isCompleted: The completion status of the task.
+    /// - Parameter tags: The tags associated with the task.
+    /// - Parameter priority: The priority of the task.
     /// - Returns: The newly added task.
-    public func addTask(_ task: String) -> Task {
+    public func addTask(
+        title: String,
+        description: String? = nil,
+        isCompleted: Bool = false,
+        tags: [String]? = nil,
+        priority: Int? = nil
+    ) -> Task {
         let newTaskID = "tid\(generateUniqueID())"
-        let newTask = Task(id: newTaskID, title: task)
+        let newTask = Task(
+            id: newTaskID,
+            title: title,
+            descriptionTask: description,
+            isCompleted: isCompleted,
+            tags: tags,
+            priority: priority
+        )
         tasks.append(newTask)
         print("Task added: \(newTask.title)")
         
-        // add task to sqlite db
-        let taskAdded = sqliteDbManager?.addTask(task: newTask)
+        // Add task to sqlite db
+        _ = sqliteDbManager?.addTask(task: newTask)
         return newTask
     }
     
@@ -63,29 +75,46 @@ public class TaskManager {
     private func generateUniqueID() -> Int {
         let timestamp = Int(Date().timeIntervalSince1970 * 1000)
         let randomValue = Int.random(in: 0..<1000)
-        let uniqueID = timestamp + randomValue
-        return uniqueID
+        return timestamp + randomValue
     }
     
     /// Updates the title of the task with the specified ID.
     ///
     /// - Parameters:
     ///   - id: The ID of the task to be updated.
-    ///   - newTaskTitle: The new title for the task.
+    ///   - newTitle: The new title for the task.
+    ///   - newDescription: The new description for the task.
+    ///   - isCompleted: The new completion status for the task.
+    ///   - tags: The new tags for the task.
+    ///   - priority: The new priority for the task.
     /// - Returns: The updated task.
-    public func updateTask(id: String, newTaskTitle: String) -> Task {
-        if let index = tasks.firstIndex(where: { $0.id == id }) {
-            tasks[index].title = newTaskTitle
-            // Publish the updated tasks array
-            tasksPublisher.send(tasks)
+    public func updateTask(
+        id: String,
+        newTitle: String,
+        newDescription: String? = nil,
+        isCompleted: Bool = false,
+        tags: [String]? = nil,
+        priority: Int? = nil
+    ) -> Task? {
+        guard let index = tasks.firstIndex(where: { $0.id == id }) else {
+            return nil
         }
-        let updatedTask =  Task(id: id, title: newTaskTitle)
+        
+        let task = tasks[index]
+        task.title = newTitle
+        task.descriptionTask = newDescription
+        task.isCompleted = isCompleted
+        task.tags = tags
+        task.priority = priority
+        
+        // Publish the updated tasks array
+        tasksPublisher.send(tasks)
         
         // Update the task in sqlite DB
-        let isTaskUpdated = sqliteDbManager?.updateTask(task: updatedTask)
-        return updatedTask
+        _ = sqliteDbManager?.updateTask(task: task)
+        
+        return task
     }
-    
     
     /// Removes the specified task from the array.
     ///
@@ -95,7 +124,7 @@ public class TaskManager {
             tasks.remove(at: index)
             
             // Remove the task from Sqlite DB
-            let isRemoved = sqliteDbManager?.deleteTask(id: task.id)
+            _ = sqliteDbManager?.deleteTask(id: task.id)
         }
     }
     
@@ -104,26 +133,52 @@ public class TaskManager {
     /// - Returns: An array of tasks.
     public func getAllTasks() -> [Task] {
         // Initialize the tasks with the Sqlite data
-        if (tasks.count == 0) {
-            if (sqliteDbManager?.getAllTasks().count)! > 1 {
-                tasks = (sqliteDbManager?.getAllTasks())!
+        if tasks.isEmpty {
+            if let sqliteTasks = sqliteDbManager?.getAllTasks() {
+                tasks = sqliteTasks
             }
         }
         return tasks
     }
     
-    /// Gets an array containing all tasks.
+    /// Gets the count of tasks.
     ///
     /// - Returns: The count of tasks.
     public func getTasksCount() -> Int {
         return tasks.count
     }
     
+    /// Adds a subtask to a specific task.
+    ///
+    /// - Parameters:
+    ///   - parentTaskID: The ID of the parent task.
+    ///   - subTaskTitle: The title of the subtask.
+    /// - Returns: The newly added subtask.
+    public func addSubtask(to parentTaskID: String, subTaskTitle: String) -> SubTask? {
+        guard let task = tasks.first(where: { $0.id == parentTaskID }) else {
+            return nil
+        }
+        
+        let newSubtask = SubTask(parentTaskID: parentTaskID, subTaskTitle: subTaskTitle)
+        task.subTasks?.append(newSubtask)
+        print("Subtask added: \(newSubtask.subTaskTitle)")
+        
+        // Update the task in sqlite DB
+        _ = sqliteDbManager?.updateTask(task: task)
+        
+        return newSubtask
+    }
+    
+    /// Gets all subtasks for a specific task.
+    ///
+    /// - Parameter parentTaskID: The ID of the parent task.
+    /// - Returns: An array of subtasks.
+    public func getSubtasks(for parentTaskID: String) -> [SubTask]? {
+        return tasks.first(where: { $0.id == parentTaskID })?.subTasks
+    }
+    
     /// Subscribes to changes in tasks.
     /// Note: One has to loop through each task if there is an update to any task title
-    ///
-    /// - Parameter handler: A closure to be executed when tasks are updated.
-    /// Subscribes to changes in tasks.
     ///
     /// - Parameter handler: A closure to be executed when tasks are updated.
     public func subscribeToChanges(handler: @escaping ([Task]) -> Void) {
