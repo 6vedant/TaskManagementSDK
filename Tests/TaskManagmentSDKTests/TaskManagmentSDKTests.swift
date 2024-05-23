@@ -27,7 +27,7 @@ final class TaskManagementSDKTests: XCTestCase {
         
         // Then
         XCTAssertEqual(addedTask.title, taskTitle)
-        XCTAssertEqual(addedTask.description, taskDescription)
+        XCTAssertEqual(addedTask.descriptionTask, taskDescription)
         XCTAssertEqual(addedTask.isCompleted, isCompleted)
         XCTAssertEqual(addedTask.tags, tags)
         XCTAssertEqual(addedTask.priority, priority)
