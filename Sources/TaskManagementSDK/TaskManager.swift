@@ -159,12 +159,12 @@ public class TaskManager {
             return nil
         }
         
-        let newSubtask = SubTask(parentTaskID: parentTaskID, subTaskID: "subtid\(generateUniqueID())", subTaskTitle: subTaskTitle)
+        let newSubtask = SubTask(parentTaskID: parentTaskID, subTaskID: "subtid\(generateUniqueID())", subTaskTitle: subTaskTitle, isSubTaskComplted: false)
         task.subTasks?.append(newSubtask)
         print("Subtask added: \(newSubtask.subTaskTitle)")
         
         // Update the task in sqlite DB
-        _ = sqliteDbManager?.updateSubTask(subTask: newSubtask)
+        _ = sqliteDbManager?.addSubTask(subTask: newSubtask)
         
         return newSubtask
     }
