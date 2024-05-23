@@ -61,7 +61,7 @@ public class SubTask: NSObject {
     public init(
         parentTaskID: String,
         subTaskID: String,
-        subTaskTitle: String = "",
+        subTaskTitle: String,
         isSubTaskComplted: Bool = false
     ) {
         self.parentTaskID = parentTaskID
