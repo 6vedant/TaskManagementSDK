@@ -154,7 +154,7 @@ public class TaskManager {
     ///   - parentTaskID: The ID of the parent task.
     ///   - subTaskTitle: The title of the subtask.
     /// - Returns: The newly added subtask.
-    public func addSubtask(to parentTaskID: String, subTaskTitle: String) -> SubTask? {
+    public func addSubTask(to parentTaskID: String, subTaskTitle: String) -> SubTask? {
         guard let task = tasks.first(where: { $0.id == parentTaskID }) else {
             return nil
         }
@@ -204,7 +204,7 @@ public class TaskManager {
     ///
     /// - Parameter parentTaskID: The ID of the parent task.
     /// - Returns: An array of subtasks.
-    public func getSubtasks(for parentTaskID: String) -> [SubTask]? {
+    public func getSubTasks(for parentTaskID: String) -> [SubTask]? {
         return tasks.first(where: { $0.id == parentTaskID })?.subTasks
     }
     
