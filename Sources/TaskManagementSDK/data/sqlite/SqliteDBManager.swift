@@ -123,7 +123,7 @@ public class SqliteDBManager {
     }
     private func addDefaultSubTask() {
         let defaultSubTask = SubTask(parentTaskID: "-1", subTaskID: "-1", subTaskTitle: "Default")
-       // addSubTask(subTask: defaultSubTask)
+        addSubTask(subTask: defaultSubTask)
     }
     
     /**
