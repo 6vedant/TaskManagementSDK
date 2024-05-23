@@ -152,7 +152,7 @@ public class SqliteDBManager {
     
     public func addSubTask(subTask: SubTask) -> Bool {
         do {
-            let insert = subTaskTable.insert(parentTaskID <- subTask.parentTaskID, subTaskID <- subTask.subTaskID, subTaskTitle <- subTask.subTaskTitle)
+            let insert = subTaskTable.insert(parentTaskID <- subTask.parentTaskID, subTaskID <- subTask.subTaskID, subTaskTitle <- subTask.subTaskTitle, isSubTaskCompleted <- false)
             try db.run(insert)
             return true
         } catch {
