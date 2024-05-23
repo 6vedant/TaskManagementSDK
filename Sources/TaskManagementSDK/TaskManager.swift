@@ -155,12 +155,12 @@ public class TaskManager {
     ///   - subTaskTitle: The title of the subtask.
     /// - Returns: The newly added subtask.
     public func addSubTask(parentTaskID: String, subTaskTitle: String) -> SubTask? {
-        guard let task = tasks.first(where: { $0.id == parentTaskID }) else {
-            return nil
-        }
+//        guard let task = tasks.first(where: { $0.id == parentTaskID }) else {
+//            return nil
+//        }
         
         let newSubtask = SubTask(parentTaskID: parentTaskID, subTaskID: "subtid\(generateUniqueID())", subTaskTitle: subTaskTitle, isSubTaskComplted: false)
-        task.subTasks?.append(newSubtask)
+      //  task.subTasks?.append(newSubtask)
         print("Subtask added: \(newSubtask.subTaskTitle)")
         
         // Update the task in sqlite DB
