@@ -53,18 +53,21 @@ public class SubTask: NSObject {
     
     // Properties
     public var parentTaskID: String
+    public var subTaskID: String
     public var subTaskTitle: String
-    public var isCompleted: Bool
+    public var isSubTaskCompleted: Bool = false
     
     // Initializer
     public init(
         parentTaskID: String,
+        subTaskID: String,
         subTaskTitle: String,
-        isCompleted: Bool = false
+        isSubTaskComplted: Bool = false
     ) {
         self.parentTaskID = parentTaskID
+        self.subTaskID = subTaskID
         self.subTaskTitle = subTaskTitle
-        self.isCompleted = isCompleted
+        self.isSubTaskCompleted = isSubTaskComplted
     }
 }
 

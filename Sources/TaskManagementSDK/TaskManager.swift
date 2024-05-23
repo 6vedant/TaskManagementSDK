@@ -159,14 +159,45 @@ public class TaskManager {
             return nil
         }
         
-        let newSubtask = SubTask(parentTaskID: parentTaskID, subTaskTitle: subTaskTitle)
+        let newSubtask = SubTask(parentTaskID: parentTaskID, subTaskID: "subtid\(generateUniqueID())", subTaskTitle: subTaskTitle)
         task.subTasks?.append(newSubtask)
         print("Subtask added: \(newSubtask.subTaskTitle)")
         
         // Update the task in sqlite DB
-        _ = sqliteDbManager?.updateTask(task: task)
+        _ = sqliteDbManager?.updateSubTask(subTask: newSubtask)
         
         return newSubtask
+    }
+    
+    public func updateSubTask(
+        parentTaskID: String,
+        subTaskID: String,
+        newSubTaskTitle: String? = nil,
+        isCompleted: Bool = false
+      ) -> SubTask? {
+        guard let index = tasks.firstIndex(where: { $0.id == parentTaskID }) else {
+            return nil
+        }
+        
+        let subTasks = tasks[index].subTasks
+          guard let subTaskIndex = subTasks?.firstIndex(where: { $0.subTaskID == subTaskID}) else {
+              return nil
+        }
+        let subTask = subTasks?[subTaskIndex]
+          if(newSubTaskTitle != nil) {
+              subTask?.subTaskTitle = newSubTaskTitle!
+          }
+        
+          subTask?.isSubTaskCompleted = isCompleted
+        
+        
+        // Publish the updated tasks array
+        tasksPublisher.send(tasks)
+        
+        // Update the task in sqlite DB
+        _ = sqliteDbManager?.updateSubTask(subTask: subTask!)
+        
+        return subTask
     }
     
     /// Gets all subtasks for a specific task.
