@@ -25,6 +25,9 @@ public class TaskManager {
     /// Initalize the database instance
     public required init() {
         sqliteDbManager = SqliteDBManager(databasePath: "\(NSHomeDirectory())/task_sqlite_db.db")
+        if let sqliteTasks = sqliteDbManager?.getAllTasks() {
+            tasks = sqliteTasks
+        }
     }
     
     /// A subject that publishes an array of tasks.
