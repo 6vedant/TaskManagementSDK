@@ -169,18 +169,18 @@ public class TaskManager {
     ///   - parentTaskID: The ID of the parent task.
     ///   - subTaskTitle: The title of the subtask.
     /// - Returns: The newly added subtask.
-    public func addSubtask(to parentTaskID: String, subTaskTitle: String) -> SubTask? {
+    public func addSubtask(parentTaskID: String, subTaskTitle: String) -> SubTask? {
         guard let task = tasks.first(where: { $0.id == parentTaskID }) else {
             return nil
         }
         
         let newSubtask = SubTask(parentTaskID: parentTaskID, subTaskID: "subtid\(generateUniqueID())", subTaskTitle: subTaskTitle)
+        subTasks.append(newSubtask)
         task.subTasks?.append(newSubtask)
-        print("Subtask added: \(newSubtask.subTaskTitle)")
         
         // Update the task in sqlite DB
-        _ = sqliteDbManager?.updateSubTask(subTask: newSubtask)
-        
+        _ = sqliteDbManager?.addSubTask(subTask: newSubtask)
+        print("Subtask added: \(newSubtask.subTaskTitle)")
         return newSubtask
     }
     
@@ -190,37 +190,57 @@ public class TaskManager {
         newSubTaskTitle: String? = nil,
         isCompleted: Bool = false
       ) -> SubTask? {
-        guard let index = tasks.firstIndex(where: { $0.id == parentTaskID }) else {
-            return nil
-        }
-        
-        let subTasks = tasks[index].subTasks
-          guard let subTaskIndex = subTasks?.firstIndex(where: { $0.subTaskID == subTaskID}) else {
+          guard let index = subTasks.firstIndex(where: { $0.subTaskID == subTaskID }) else {
               return nil
-        }
-        let subTask = subTasks?[subTaskIndex]
-          if(newSubTaskTitle != nil) {
-              subTask?.subTaskTitle = newSubTaskTitle!
           }
+          
+          let subTask = subTasks[index]
+          if (newSubTaskTitle != nil) {
+              subTask.subTaskTitle = newSubTaskTitle!
+          }
+          subTask.isSubTaskCompleted = isCompleted
+         
+          // Publish the updated tasks array
+          subTasksPublisher.send(subTasks)
+          
+          // Update the task in sqlite DB
+          _ = sqliteDbManager?.updateSubTask(subTask: subTask)
+          
+          return subTask
+    }
+    
+    public func deleteSubTask(subTaskID: String) {
+        guard let index = subTasks.firstIndex(where: { $0.subTaskID == subTaskID }) else {
+            return
+        }
         
-          subTask?.isSubTaskCompleted = isCompleted
-        
-        
-        // Publish the updated tasks array
-        tasksPublisher.send(tasks)
-        
-        // Update the task in sqlite DB
-        _ = sqliteDbManager?.updateSubTask(subTask: subTask!)
-        
-        return subTask
+        subTasks.remove(at: index)
+        subTasksPublisher.send(subTasks)
+        _ = sqliteDbManager?.deleteSubTask(subTaskID: subTaskID)
     }
     
     /// Gets all subtasks for a specific task.
     ///
     /// - Parameter parentTaskID: The ID of the parent task.
     /// - Returns: An array of subtasks.
-    public func getSubtasks(for parentTaskID: String) -> [SubTask]? {
-        return tasks.first(where: { $0.id == parentTaskID })?.subTasks
+    public func getSubTasks(parentTaskID: String) -> [SubTask]? {
+        var result: [SubTask] = []
+        for subTask in subTasks {
+            if subTask.parentTaskID == parentTaskID {
+                result.append(subTask)
+            }
+        }
+        return result.isEmpty ? nil : result
+    }
+    
+    public func getAllSubTasks() -> [SubTask]? {
+        // Initialize the tasks with the Sqlite data
+        if subTasks.isEmpty {
+            if let sqliteSubTasks = sqliteDbManager?.getAllSubTasks() {
+                subTasks = sqliteSubTasks
+            }
+        }
+        return subTasks
     }
     
     /// Subscribes to changes in tasks.
