@@ -189,7 +189,11 @@ public class TaskManager {
         newSubTaskTitle: String? = nil,
         isCompleted: Bool = false
       ) -> SubTask? {
+          guard let index = subTasks.firstIndex(where: { $0.subTaskID == subTask.subTaskID }) else {
+              return nil
+          }
           
+          let subTask = subTasks[index]
           if (newSubTaskTitle != nil) {
               subTask.subTaskTitle = newSubTaskTitle!
           }
