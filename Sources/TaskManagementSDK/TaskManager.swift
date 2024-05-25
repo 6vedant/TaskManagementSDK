@@ -185,12 +185,11 @@ public class TaskManager {
     }
     
     public func updateSubTask(
-        parentTaskID: String,
-        subTaskID: String,
+        subTask: SubTask,
         newSubTaskTitle: String? = nil,
         isCompleted: Bool = false
       ) -> SubTask? {
-          guard let index = subTasks.firstIndex(where: { $0.subTaskID == subTaskID }) else {
+          guard let index = subTasks.firstIndex(where: { $0.subTaskID == subTask.subTaskID }) else {
               return nil
           }
           
@@ -223,7 +222,7 @@ public class TaskManager {
     ///
     /// - Parameter parentTaskID: The ID of the parent task.
     /// - Returns: An array of subtasks.
-    public func getSubTasks(parentTaskID: String) -> [SubTask]? {
+    public func getSubTasksOfTask(parentTaskID: String) -> [SubTask]? {
         var result: [SubTask] = []
         for subTask in subTasks {
             if subTask.parentTaskID == parentTaskID {
