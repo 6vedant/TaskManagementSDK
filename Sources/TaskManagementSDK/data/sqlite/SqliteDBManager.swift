@@ -239,7 +239,7 @@ public class SqliteDBManager {
         return tagsString.components(separatedBy: ",")
     }
     
-    public func getAllSubtasks(forTaskID taskID: String) -> [SubTask] {
+    public func getSubTasksForGivenTask(forTaskID taskID: String) -> [SubTask] {
         var allSubTasks = [SubTask]()
         do {
             for subtask in try db.prepare(subTaskTable.filter(parentTaskID == taskID)) {
@@ -249,6 +249,18 @@ public class SqliteDBManager {
             }
         } catch {
             print("Error fetching subtasks: \(error)")
+        }
+        return allSubTasks
+    }
+    public func getAllSubTasks() -> [SubTask] {
+        var allSubTasks = [SubTask]()
+        do {
+            for subtask in try db.prepare(subTaskTable) {
+                let newSubtask = SubTask(parentTaskID: subtask[parentTaskID], subTaskID: subtask[subTaskID], subTaskTitle: subtask[subTaskTitle], isSubTaskComplted: subtask[isSubTaskCompleted])
+                allSubTasks.append(newSubtask)
+            }
+        } catch {
+            print("Error fetching tasks: \(error)")
         }
         return allSubTasks
     }

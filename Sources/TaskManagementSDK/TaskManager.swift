@@ -21,6 +21,13 @@ public class TaskManager {
         }
     }
     
+    private var subTasks: [SubTask] = [] {
+        didSet {
+            subTasksPublisher.send(subTasks)
+        }
+    }
+   
+    
     /// Initializes a new instance of the `TaskManager`.
     /// Initalize the database instance
     public required init() {
@@ -28,12 +35,17 @@ public class TaskManager {
         if let sqliteTasks = sqliteDbManager?.getAllTasks() {
                     tasks = sqliteTasks
         }
+        if let sqliteSubTasks = sqliteDbManager?.getAllSubTasks() {
+                    subTasks = sqliteSubTasks
+        }
     }
     
     /// A subject that publishes an array of tasks.
     ///
     /// Subscribers can listen for changes to the tasks using this publisher.
     private let tasksPublisher = CurrentValueSubject<[Task], Never>([])
+    
+    private let subTasksPublisher = CurrentValueSubject<[SubTask], Never>([])
     
     /// An array of cancellables for handling subscriptions.
     ///
@@ -219,6 +231,13 @@ public class TaskManager {
         tasksPublisher
             .sink { tasks in
                 handler(tasks)
+            }
+            .store(in: &cancellables)
+    }
+    public func subscribeToChangesForSubTasks(handler: @escaping ([SubTask]) -> Void) {
+        subTasksPublisher
+            .sink { subTasks in
+                handler(subTasks)
             }
             .store(in: &cancellables)
     }
