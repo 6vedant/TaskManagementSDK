@@ -233,7 +233,7 @@ public class TaskManager {
         return result.isEmpty ? nil : result
     }
     
-    public func getAllSubTasks() -> [SubTask]? {
+    public func getAllSubTasks() -> [SubTask] {
         // Initialize the tasks with the Sqlite data
         if subTasks.isEmpty {
             if let sqliteSubTasks = sqliteDbManager?.getAllSubTasks() {
