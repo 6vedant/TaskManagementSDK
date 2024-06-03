@@ -61,13 +61,14 @@ public class TaskManager {
     /// - Parameter priority: The priority of the task.
     /// - Returns: The newly added task.
     public func addTask(
+        id: String,
         title: String,
         description: String? = nil,
         isCompleted: Bool = false,
         tags: [String]? = nil,
         priority: Int? = nil
     ) -> Task {
-        let newTaskID = "tid\(generateUniqueID())"
+        let newTaskID = id
         let newTask = Task(
             id: newTaskID,
             title: title,
@@ -169,12 +170,12 @@ public class TaskManager {
     ///   - parentTaskID: The ID of the parent task.
     ///   - subTaskTitle: The title of the subtask.
     /// - Returns: The newly added subtask.
-    public func addSubtask(parentTaskID: String, subTaskTitle: String) -> SubTask? {
+    public func addSubtask(id: String, parentTaskID: String, subTaskTitle: String) -> SubTask? {
         guard let task = tasks.first(where: { $0.id == parentTaskID }) else {
             return nil
         }
         
-        let newSubtask = SubTask(parentTaskID: parentTaskID, subTaskID: "subtid\(generateUniqueID())", subTaskTitle: subTaskTitle)
+        let newSubtask = SubTask(parentTaskID: parentTaskID, subTaskID: id, subTaskTitle: subTaskTitle)
         subTasks.append(newSubtask)
         task.subTasks?.append(newSubtask)
         
