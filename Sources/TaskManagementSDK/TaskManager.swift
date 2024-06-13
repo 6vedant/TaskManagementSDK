@@ -65,10 +65,11 @@ public class TaskManager {
         title: String,
         description: String? = nil,
         isCompleted: Bool = false,
-        tags: [String]? = nil,
+        tags: String = "",
         priority: Int? = nil
     ) -> Task {
         let newTaskID = id
+        let tags = getArrayFromTagsString(tagsString: tags)
         let newTask = Task(
             id: newTaskID,
             title: title,
@@ -261,4 +262,19 @@ public class TaskManager {
             }
             .store(in: &cancellables)
     }
+    
+    public func getTagsStringEquivalent(tags: [String]?) -> String {
+            guard let tags = tags else {
+                return ""
+            }
+            return tags.joined(separator: ",")
+    }
+    
+    public func getArrayFromTagsString(tagsString: String?) -> [String] {
+        guard let tagsString = tagsString, !tagsString.isEmpty else {
+            return []
+        }
+        return tagsString.split(separator: ",").map { String($0) }
+    }
+
 }
