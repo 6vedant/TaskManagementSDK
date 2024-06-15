@@ -110,12 +110,13 @@ public class TaskManager {
         newTitle: String,
         newDescription: String? = nil,
         isCompleted: Bool = false,
-        tags: [String]? = nil,
+        tags: String = "",
         priority: Int? = nil
     ) -> Task? {
         guard let index = tasks.firstIndex(where: { $0.id == id }) else {
             return nil
         }
+        let tags = getArrayFromTagsString(tagsString: tags)
         
         let task = tasks[index]
         task.title = newTitle
