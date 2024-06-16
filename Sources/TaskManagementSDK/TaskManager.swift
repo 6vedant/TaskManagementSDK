@@ -8,7 +8,7 @@ public class TaskManager {
     /// The shared instance of the `TaskManager`.
     public static let viewModel = TaskManager()
     
-    /// The Sqlite instance to do CRUD operations
+    /// The Sqlite instance to perform CRUD operations.
     private var sqliteDbManager: SqliteDBManager?
     
     /// The array containing tasks.
@@ -21,22 +21,26 @@ public class TaskManager {
         }
     }
     
+    /// The array containing subtasks.
+    ///
+    /// Subtasks are stored in this array, and changes to the array trigger notifications
+    /// to subscribers through the `subTasksPublisher`.
     private var subTasks: [SubTask] = [] {
         didSet {
             subTasksPublisher.send(subTasks)
         }
     }
-   
     
     /// Initializes a new instance of the `TaskManager`.
-    /// Initalize the database instance
+    ///
+    /// This initializer sets up the database instance and loads tasks and subtasks from the database.
     public required init() {
         sqliteDbManager = SqliteDBManager(databasePath: "\(NSHomeDirectory())/task_sqlite_db.db")
         if let sqliteTasks = sqliteDbManager?.getAllTasks() {
-                    tasks = sqliteTasks
+            tasks = sqliteTasks
         }
         if let sqliteSubTasks = sqliteDbManager?.getAllSubTasks() {
-                    subTasks = sqliteSubTasks
+            subTasks = sqliteSubTasks
         }
     }
     
@@ -45,20 +49,25 @@ public class TaskManager {
     /// Subscribers can listen for changes to the tasks using this publisher.
     private let tasksPublisher = CurrentValueSubject<[Task], Never>([])
     
+    /// A subject that publishes an array of subtasks.
+    ///
+    /// Subscribers can listen for changes to the subtasks using this publisher.
     private let subTasksPublisher = CurrentValueSubject<[SubTask], Never>([])
     
     /// An array of cancellables for handling subscriptions.
     ///
     /// Cancellables are stored in this array to manage the lifecycle of subscriptions.
-    private var cancellables: [AnyCancellable] = [] // Use non-optional array
+    private var cancellables: [AnyCancellable] = []
     
     /// Adds a new task with the specified properties.
     ///
-    /// - Parameter title: The title of the task to be added.
-    /// - Parameter description: The description of the task.
-    /// - Parameter isCompleted: The completion status of the task.
-    /// - Parameter tags: The tags associated with the task.
-    /// - Parameter priority: The priority of the task.
+    /// - Parameters:
+    ///   - id: The unique identifier for the task.
+    ///   - title: The title of the task to be added.
+    ///   - description: The description of the task.
+    ///   - isCompleted: The completion status of the task.
+    ///   - tags: The tags associated with the task.
+    ///   - priority: The priority of the task.
     /// - Returns: The newly added task.
     public func addTask(
         id: String,
@@ -68,20 +77,19 @@ public class TaskManager {
         tags: String = "",
         priority: Int? = nil
     ) -> Task {
-        let newTaskID = id
-        let tags = getArrayFromTagsString(tagsString: tags)
+        let tagsArray = getArrayFromTagsString(tagsString: tags)
         let newTask = Task(
-            id: newTaskID,
+            id: id,
             title: title,
             descriptionTask: description,
             isCompleted: isCompleted,
-            tags: tags,
+            tags: tagsArray,
             priority: priority
         )
         tasks.append(newTask)
         print("Task added: \(newTask.title)")
         
-        // Add task to sqlite db
+        // Add task to SQLite database
         _ = sqliteDbManager?.addTask(task: newTask)
         return newTask
     }
@@ -116,19 +124,19 @@ public class TaskManager {
         guard let index = tasks.firstIndex(where: { $0.id == id }) else {
             return nil
         }
-        let tags = getArrayFromTagsString(tagsString: tags)
+        let tagsArray = getArrayFromTagsString(tagsString: tags)
         
         let task = tasks[index]
         task.title = newTitle
         task.descriptionTask = newDescription
         task.isCompleted = isCompleted
-        task.tags = tags
+        task.tags = tagsArray
         task.priority = priority
         
         // Publish the updated tasks array
         tasksPublisher.send(tasks)
         
-        // Update the task in sqlite DB
+        // Update the task in SQLite database
         _ = sqliteDbManager?.updateTask(task: task)
         
         return task
@@ -141,7 +149,7 @@ public class TaskManager {
         if let index = tasks.firstIndex(where: { $0.id == task.id }) {
             tasks.remove(at: index)
             
-            // Remove the task from Sqlite DB
+            // Remove the task from SQLite database
             _ = sqliteDbManager?.deleteTask(id: task.id)
         }
     }
@@ -150,7 +158,7 @@ public class TaskManager {
     ///
     /// - Returns: An array of tasks.
     public func getAllTasks() -> [Task] {
-        // Initialize the tasks with the Sqlite data
+        // Initialize the tasks with the SQLite data
         if tasks.isEmpty {
             if let sqliteTasks = sqliteDbManager?.getAllTasks() {
                 tasks = sqliteTasks
@@ -169,6 +177,7 @@ public class TaskManager {
     /// Adds a subtask to a specific task.
     ///
     /// - Parameters:
+    ///   - id: The unique identifier for the subtask.
     ///   - parentTaskID: The ID of the parent task.
     ///   - subTaskTitle: The title of the subtask.
     /// - Returns: The newly added subtask.
@@ -181,36 +190,46 @@ public class TaskManager {
         subTasks.append(newSubtask)
         task.subTasks?.append(newSubtask)
         
-        // Update the task in sqlite DB
+        // Add subtask to SQLite database
         _ = sqliteDbManager?.addSubTask(subTask: newSubtask)
         print("Subtask added: \(newSubtask.subTaskTitle)")
         return newSubtask
     }
     
+    /// Updates the title and completion status of the specified subtask.
+    ///
+    /// - Parameters:
+    ///   - subTask: The subtask to be updated.
+    ///   - newSubTaskTitle: The new title for the subtask.
+    ///   - isCompleted: The new completion status for the subtask.
+    /// - Returns: The updated subtask.
     public func updateSubTask(
         subTask: SubTask,
         newSubTaskTitle: String? = nil,
         isCompleted: Bool = false
-      ) -> SubTask? {
-          guard let index = subTasks.firstIndex(where: { $0.subTaskID == subTask.subTaskID }) else {
-              return nil
-          }
-          
-          let subTask = subTasks[index]
-          if (newSubTaskTitle != nil) {
-              subTask.subTaskTitle = newSubTaskTitle!
-          }
-          subTask.isSubTaskCompleted = isCompleted
+    ) -> SubTask? {
+        guard let index = subTasks.firstIndex(where: { $0.subTaskID == subTask.subTaskID }) else {
+            return nil
+        }
+        
+        let subTask = subTasks[index]
+        if let newSubTaskTitle = newSubTaskTitle {
+            subTask.subTaskTitle = newSubTaskTitle
+        }
+        subTask.isSubTaskCompleted = isCompleted
          
-          // Publish the updated tasks array
-          subTasksPublisher.send(subTasks)
-          
-          // Update the task in sqlite DB
-          _ = sqliteDbManager?.updateSubTask(subTask: subTask)
-          
-          return subTask
+        // Publish the updated subtasks array
+        subTasksPublisher.send(subTasks)
+        
+        // Update the subtask in SQLite database
+        _ = sqliteDbManager?.updateSubTask(subTask: subTask)
+        
+        return subTask
     }
     
+    /// Deletes the specified subtask.
+    ///
+    /// - Parameter subTaskID: The ID of the subtask to be deleted.
     public func deleteSubTask(subTaskID: String) {
         guard let index = subTasks.firstIndex(where: { $0.subTaskID == subTaskID }) else {
             return
@@ -235,8 +254,11 @@ public class TaskManager {
         return result.isEmpty ? nil : result
     }
     
+    /// Gets an array containing all subtasks.
+    ///
+    /// - Returns: An array of subtasks.
     public func getAllSubTasks() -> [SubTask] {
-        // Initialize the tasks with the Sqlite data
+        // Initialize the subtasks with the SQLite data
         if subTasks.isEmpty {
             if let sqliteSubTasks = sqliteDbManager?.getAllSubTasks() {
                 subTasks = sqliteSubTasks
@@ -246,7 +268,6 @@ public class TaskManager {
     }
     
     /// Subscribes to changes in tasks.
-    /// Note: One has to loop through each task if there is an update to any task title
     ///
     /// - Parameter handler: A closure to be executed when tasks are updated.
     public func subscribeToChanges(handler: @escaping ([Task]) -> Void) {
@@ -256,6 +277,10 @@ public class TaskManager {
             }
             .store(in: &cancellables)
     }
+    
+    /// Subscribes to changes in subtasks.
+    ///
+    /// - Parameter handler: A closure to be executed when subtasks are updated.
     public func subscribeToChangesForSubTasks(handler: @escaping ([SubTask]) -> Void) {
         subTasksPublisher
             .sink { subTasks in
@@ -264,18 +289,25 @@ public class TaskManager {
             .store(in: &cancellables)
     }
     
+    /// Converts an array of tags to a comma-separated string.
+    ///
+    /// - Parameter tags: An array of tags.
+    /// - Returns: A comma-separated string of tags.
     public func getTagsStringEquivalent(tags: [String]?) -> String {
-            guard let tags = tags else {
-                return ""
-            }
-            return tags.joined(separator: ",")
+        guard let tags = tags else {
+            return ""
+        }
+        return tags.joined(separator: ",")
     }
     
+    /// Converts a comma-separated string of tags to an array.
+    ///
+    /// - Parameter tagsString: A comma-separated string of tags.
+    /// - Returns: An array of tags.
     public func getArrayFromTagsString(tagsString: String?) -> [String] {
         guard let tagsString = tagsString, !tagsString.isEmpty else {
             return []
         }
         return tagsString.split(separator: ",").map { String($0) }
     }
-
 }
