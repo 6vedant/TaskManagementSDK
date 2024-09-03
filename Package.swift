@@ -2,9 +2,11 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+import Foundation
 
 let package = Package(
     name: "TaskManagementSDK",
+    platforms: [.macOS(.v10_15)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -13,7 +15,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.10.0"),
-        .package(url: "https://github.com/scade-platform/SQLite.swift.git", branch: "master")
+        .package(url: "https://github.com/scade-platform/SQLite.swift.git", branch: "master"),
+        .package(url: "https://github.com/scade-platform/swift-java.git", branch: "plugin"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -23,7 +26,8 @@ let package = Package(
             name: "TaskManagementSDK",
             dependencies: [
                 .product(name: "OpenCombine", package: "OpenCombine"),
-                .product(name: "SQLite", package: "SQLite.swift")
+                .product(name: "SQLite", package: "SQLite.swift"),
+                .product(name: "SwiftJava", package: "swift-java"),
             ]),
         .testTarget(
             name: "TaskManagementSDKTests",
