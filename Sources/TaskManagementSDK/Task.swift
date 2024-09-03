@@ -6,10 +6,13 @@
 //
 
 import Foundation
+import SwiftJava
 
+@exported(.android)
 public class Task: NSObject, Identifiable {
     
     // Initializer
+        @exported
         public init(
             id: String,
             title: String,
@@ -30,6 +33,14 @@ public class Task: NSObject, Identifiable {
             self.priority = priority
         }
     
+    // default constructor
+    public override init() {
+        self.id = "Temp"
+        self.title = "Tempp"
+        self.dateCreated = Date().timeIntervalSince1970
+        self.isCompleted = false
+    }
+    
     // id of the Task
     public var id: String
     
@@ -49,6 +60,7 @@ public class Task: NSObject, Identifiable {
     public var tags: [String]?
 }
 
+@exported(.android)
 public class SubTask: NSObject {
     
     // Properties
@@ -68,6 +80,13 @@ public class SubTask: NSObject {
         self.subTaskID = subTaskID
         self.subTaskTitle = subTaskTitle
         self.isSubTaskCompleted = isSubTaskComplted
+    }
+    
+    public override init() {
+        self.parentTaskID = "temp"
+        self.subTaskID = "temp"
+        self.subTaskTitle = "temp"
+        
     }
 }
 

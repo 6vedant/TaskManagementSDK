@@ -26,6 +26,33 @@
         "branch" : "master",
         "revision" : "6374e199cc703eb8e4f58a48fb656ea1d44da9e1"
       }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "state" : {
+        "revision" : "41982a3656a71c768319979febd796c6fd111d5c",
+        "version" : "1.5.0"
+      }
+    },
+    {
+      "identity" : "swift-java",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scade-platform/swift-java.git",
+      "state" : {
+        "branch" : "plugin",
+        "revision" : "8274381819144f1b0e62d5061592e4322edb422b"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
+        "version" : "509.1.1"
+      }
     }
   ],
   "version" : 2
